@@ -14,7 +14,7 @@ body {
 }
 
 #logo {
-    height: 60px;
+    height: 60px;  /* 设置一个合适的高度 */
     width: auto;   /* 宽度自动调整 */
     float: right;
     object-fit: contain;  /* 确保图片完整显示且保持比例 */
@@ -61,14 +61,6 @@ body {
 }
 
 /*   BAR-CHART  */
-
-.chart-hint {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 10px;
-    text-align: center;
-    font-style: italic;
-}
 
 .bar {
     fill: #007bff;

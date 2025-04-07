@@ -81,7 +81,7 @@ function updateStats() {
     // 3. 更新DOM
     document.getElementById('delivery-count').textContent = deliveryCount;
     document.getElementById('pizza-count').textContent = pizzaCount;
-    document.getElementById('avg-time').textContent = `${avgTime}`;
+    document.getElementById('avg-time').textContent = `${avgTime} 分钟`;
     document.getElementById('total-sales').textContent = `$${totalSales}`;
 
     document.getElementById('feedback-count').textContent = feedbackCount;

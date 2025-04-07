@@ -22,7 +22,7 @@ function initialize() {
         // 初始化数据
         filteredData = [...deliveryData];
 
-        // 确保 DOM 完全加载后再更新语言，否则图表不显示
+        // 确保 DOM 完全加载后再更新语言，否则
         if (document.readyState === 'complete') {
             updateLanguage();
             updateStats();
@@ -81,7 +81,7 @@ function updateStats() {
     // 3. 更新DOM
     document.getElementById('delivery-count').textContent = deliveryCount;
     document.getElementById('pizza-count').textContent = pizzaCount;
-    document.getElementById('avg-time').textContent = `${avgTime}`;
+    document.getElementById('avg-time').textContent = `${avgTime} 分钟`;
     document.getElementById('total-sales').textContent = `$${totalSales}`;
 
     document.getElementById('feedback-count').textContent = feedbackCount;

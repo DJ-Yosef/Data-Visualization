@@ -1,6 +1,6 @@
 const languages = {
     zh: {
-        title: "Pizza 配送数据统计",
+        title: "Pizza 配送数据看板",
         delivery_count: "总配送次数",
         pizza_count: "总披萨数量",
         avg_time: "平均配送时间（分钟）",
@@ -22,7 +22,7 @@ const languages = {
         title: "Pizza Delivery Dashboard",
         delivery_count: "Total Deliveries",
         pizza_count: "Total Pizzas",
-        avg_time: "Average Delivery Time (mins)",
+        avg_time: "Average Delivery Time(min)",
         total_sales: "Total Sales (USD)",
         feedback_count: "Total Feedback",
         high_quality: "High Quality",
