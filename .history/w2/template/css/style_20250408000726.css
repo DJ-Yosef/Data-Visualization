@@ -63,6 +63,7 @@ body {
     float: right;
 }
 
+/****************/
 /*   BAR-CHART  */
 
 .bar {
@@ -90,7 +91,9 @@ body {
 }
 
 
+/****************/
 /*   TOOLTIPS   */
+/****************/
 
 .d3-tip {
 padding: 12px;

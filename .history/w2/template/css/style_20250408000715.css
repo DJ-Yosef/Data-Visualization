@@ -51,6 +51,7 @@ body {
     margin-top: 30px;
 }
 
+/* ************ ADD YOUR CUSTOM STYLES ************ */
 
 #logo {
     width: 60%;
@@ -63,7 +64,9 @@ body {
     float: right;
 }
 
+/****************/
 /*   BAR-CHART  */
+/****************/
 
 .bar {
     fill: #007bff;
@@ -90,7 +93,9 @@ body {
 }
 
 
+/****************/
 /*   TOOLTIPS   */
+/****************/
 
 .d3-tip {
 padding: 12px;
