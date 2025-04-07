@@ -1,4 +1,3 @@
-/* ************ ADD YOUR CUSTOM STYLES ************ */
 
 body {
     font-family: 'Arial', sans-serif;
@@ -52,16 +51,13 @@ body {
     margin-top: 30px;
 }
 
-/* ************ ADD YOUR CUSTOM STYLES ************ */
 
 #logo {
     width: 60%;
     float: right;
 }
 
-/****************/
 /*   BAR-CHART  */
-/****************/
 
 .bar {
     fill: #007bff;
@@ -88,9 +84,7 @@ body {
 }
 
 
-/****************/
 /*   TOOLTIPS   */
-/****************/
 
 .d3-tip {
 padding: 12px;
