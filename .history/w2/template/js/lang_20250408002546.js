@@ -17,7 +17,7 @@ const languages = {
         order_type: "订单类型",
         web: "网络",
         phone: "电话",
-        chart_title: "配送数量按时间分布",
+        chart_title: "配送数量按时间",
         chart_hint: "鼠标悬停查看详情"
     },
     en: {
