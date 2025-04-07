@@ -12,6 +12,7 @@ let filteredData = [];
 // 初始化函数
 function initialize() {
     filteredData = [...deliveryData];
+    
     updateStats();
     renderBarChart(filteredData);
 }

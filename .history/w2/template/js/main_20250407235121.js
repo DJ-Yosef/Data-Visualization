@@ -12,6 +12,7 @@ let filteredData = [];
 // 初始化函数
 function initialize() {
     filteredData = [...deliveryData];
+    // 更新统计数据和图表
     updateStats();
     renderBarChart(filteredData);
 }
@@ -29,6 +30,7 @@ function dataManipulation() {
         return areaMatch && orderMatch;
     });
 
+    // 更新统计和图表
     updateStats();
     renderBarChart(filteredData);
 }
