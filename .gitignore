@@ -1,0 +1,12 @@
+.DV
+.history
+.idea
+
+.data
+
+.DS_Store
+
+*.pyc
+__pycache__
+
+*.zip
