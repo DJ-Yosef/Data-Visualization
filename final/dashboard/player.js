@@ -3,12 +3,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     const playerName = params.get('name');
 
-    const data = await d3.json('player_data.json');
+    const data = await d3.json('players_data.json');
     const player = data.find(p => p.player === decodeURIComponent(playerName));
 
     if (player) {
+        console.log('Player data:', player);
         renderPlayerInfo(player);
         drawRadarChart(player);
+    }
+    else {
+        console.error('Player not found:', playerName);
+        document.querySelector('.player-container').innerHTML = '<p>未找到该球员信息</p>';
     }
 });
 
@@ -16,24 +21,67 @@ function renderPlayerInfo(player) {
     // 基础信息
     document.getElementById('player-img').src = player.player_img;
     document.getElementById('player-name').textContent = player.player;
-    document.getElementById('player-pos').textContent = player.pos;
-    document.getElementById('player-age').textContent = player.Age;
+    document.getElementById('player-pos').textContent = `${player.pos} - ${player.main_pos}`;
+    document.getElementById('player-age').textContent = `${player.age}岁`;
     document.getElementById('player-height').textContent = `${player.height}cm`;
+    document.getElementById('player-country').textContent = player.country;
     document.getElementById('player-team').textContent = player.squad;
+    document.getElementById('player-wage').textContent = player.wage.split('(')[0].trim();
+    document.querySelector('.team-logo').src = player.squad_img;
 
     // 核心指标
-    document.getElementById('gls90').textContent = (player.Gls / player['90s']).toFixed(1);
-    document.getElementById('xG').textContent = player.xG.toFixed(1);
-    document.getElementById('prgC').textContent = player.PrgC;
+    document.getElementById('sh_xG').textContent = player.sh_xG.toFixed(1);
+    document.getElementById('pas_Cmp%').textContent = `${player['pas_Cmp%']}%`;
+    document.getElementById('def_Int').textContent = player.def_Int;
 
-    // 详细数据
-    document.getElementById('MP').textContent = player.MP;
-    document.getElementById('Poss').textContent = `${player.Poss}%`;
-    document.getElementById('G-PK').textContent = player['G-PK'];
+    // 基础数据
+    document.getElementById('90s').textContent = player['90s'];
+    document.getElementById('height').textContent = `${player.height}cm`;
+    document.getElementById('age').textContent = player.age;
+
+    // 进攻数据
+    document.getElementById('sh_SoT').textContent = player.sh_SoT;
+    document.getElementById('sh_SoT%').textContent = `${player['sh_SoT%']}%`;
+    document.getElementById('sh_G/Sh').textContent = player['sh_G/Sh'];
+    document.getElementById('sh_Sh').textContent = player.sh_Sh;
+    document.getElementById('sh_Dist').textContent = `${player.sh_Dist}米`;
+
+    // 传球数据
+    document.getElementById('pas_Cmp').textContent = player.pas_Cmp;
+    document.getElementById('pas_PrgDist').textContent = `${player.pas_PrgDist}米`;
+    document.getElementById('pas_TotDist').textContent = `${player.pas_TotDist}米`;
+    document.getElementById('pas_KP').textContent = player.pas_KP;
+    document.getElementById('pas_1/3').textContent = player['pas_1/3'];
+
+    // 防守数据
+    document.getElementById('def_Tkl').textContent = player.def_Tkl;
+    document.getElementById('def_TklW').textContent = player.def_TklW;
+    document.getElementById('def_Tkl%').textContent = `${player['def_Tkl%']}%`;
+    document.getElementById('def_Clr').textContent = player.def_Clr;
+    document.getElementById('def_Err').textContent = player.def_Err;
+    document.getElementById('def_Blocks').textContent = player.def_Blocks;
+
+    // 持球数据
+    document.getElementById('pos_Succ').textContent = player.pos_Succ;
+    document.getElementById('pos_Succ%').textContent = `${player['pos_Succ%']}%`;
+    document.getElementById('pos_PrgDist').textContent = `${player.pos_PrgDist}米`;
+    document.getElementById('pos_PrgC').textContent = player.pos_PrgC;
+    document.getElementById('pos_Carries').textContent = player.pos_Carries;
 }
 
+// function translatePosition(pos) {
+//     const positions = {
+//         'CB': '中后卫',
+//         'DF': '后卫',
+//         'MF': '中场',
+//         'FW': '前锋',
+//         'GK': '守门员'
+//     };
+//     return positions[pos] || pos;
+// }
+
 function drawRadarChart(player) {
-    // 雷达图指标计算
+    // 更新雷达图指标计算以适应新数据结构
     const metrics = {
         stamina: calculateStamina(player),
         shooting: calculateShooting(player),
@@ -50,54 +98,56 @@ function drawRadarChart(player) {
     const radarData = [{
         axes: Object.entries(normalized).map(([key, value]) => ({
             axis: translateLabel(key),
-            value: value
+            value: Math.min(100, Math.max(0, value)) // 确保值在0-100范围内
         }))
     }];
 
     RadarChart.draw("#radar-chart", radarData, radarConfig);
 }
 
-// 指标计算函数
+// 更新指标计算函数
 function calculateStamina(p) {
-    return (p.Min / 90) * 30 + (p['90s'] / p.MP) * 70;
+    return (p['90s'] * 30) + (p.pos_PrgDist / 100 * 70);
 }
 
 function calculateShooting(p) {
-    return (p.Gls * 40) + (p.xG * 30) + (p['G-PK'] * 30);
+    return (p.sh_xG * 40) + (p.sh_SoT * 30) + (p['sh_SoT%'] * 30);
 }
 
 function calculateControl(p) {
-    return (p.PrgC * 0.6 + p.Poss * 0.4) * 1.5;
+    return (p['pos_Succ%'] * 0.6 + p.pos_Carries * 0.4) * 1.5;
 }
 
 function calculatePassing(p) {
-    return (p.PrgP * 0.5 + p.Ast * 0.3 + p.xAG * 0.2) * 2;
+    return (p['pas_Cmp%'] * 0.5 + p.pas_KP * 0.3 + p['pas_1/3'] * 0.2) * 2;
 }
 
 function calculateDefense(p) {
-    return (100 - p.CrdY * 2) - p.CrdR * 5;
+    return (p.def_Int * 0.4 + p.def_TklW * 0.3 + p.def_Clr * 0.3) * 2.5;
 }
 
 function calculateSpecial(p) {
-    return (p.npxG + p.xAG) * 10;
+    return (p.pas_PPA + p.pos_CPA) * 10;
 }
 
 // 归一化函数
 function normalizeMetrics(metrics) {
     const ranges = {
-        stamina: [50, 100],
-        shooting: [30, 95],
-        control: [40, 90],
-        passing: [45, 85],
-        defense: [60, 98],
-        special: [50, 95]
+        stamina: [30, 100],
+        shooting: [20, 90],
+        control: [40, 95],
+        passing: [50, 100],
+        defense: [60, 100],
+        special: [30, 80]
     };
 
     return Object.fromEntries(
         Object.entries(metrics).map(([k, v]) => [
             k,
-            ((v - ranges[k][0]) / (ranges[k][1] - ranges[k][0])) * 100]
-        )
+            Math.min(100, Math.max(0,
+                ((v - ranges[k][0]) / (ranges[k][1] - ranges[k][0])) * 100
+            ))
+        ])
     );
 }
 
