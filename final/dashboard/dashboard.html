@@ -1,0 +1,41 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>足球数据可视化系统</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <!-- 主界面 -->
+    <div class="container">
+        <!-- 球场视图 -->
+        <div class="dashboard">
+            <select id="team-select" class="team-selector">
+                <option value="">选择球队</option>
+            </select>
+            <div class="pitch-container">
+                <img src="pitch.png" class="pitch-bg">
+                <div id="player-markers">
+                    <!-- 动态生成位置标记 -->
+                    <div class="position-line df-line"></div>
+                    <div class="position-line mf-line"></div>
+                    <div class="position-line fw-line"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 球员详情 -->
+        <div id="player-detail" class="player-detail hidden">
+            <button class="close-btn">×</button>
+            <div class="player-header"></div>
+            <div class="radar-container"></div>
+            <div class="stats-grid"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
