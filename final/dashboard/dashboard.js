@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 球队选择
         d3.select('#team-select').on('change', function() {
             const team = this.value;
+            document.getElementById('team-name').textContent = '球队信息';
             renderTeamPlayers(team);
         });
 

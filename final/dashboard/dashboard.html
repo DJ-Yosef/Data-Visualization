@@ -16,6 +16,12 @@
             <select id="team-select" class="team-selector">
                 <option value="">选择球队</option>
             </select>
+            <div class="team-info"
+                onclick=window.location.href=
+                    'team.html?team=' + document.getElementById('team-select').value>
+                <!-- <img id="team-logo" src="" alt="球队徽标"> -->
+                <span id="team-name">请选择球队</span>
+            </div>
             <div class="pitch-container">
                 <img src="img/pitch.svg.png" class="pitch-bg">
                 <div id="player-markers">

@@ -25,6 +25,14 @@ body {
     border-radius: 5px;
 }
 
+.team-info {
+    width: 200px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+}
+
 .pitch-container {
     position: relative;
     background: #2ecc71;
