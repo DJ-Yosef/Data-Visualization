@@ -3,18 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>随便起个名字</title>
+  <title>性价比回归分析</title>
 
   <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet" />
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="性价比散点图_css/scatterplot_style.css" />
+  <link rel="stylesheet" href="scatterplot_style.css" />
   <!-- tippy.js CSS -->
   <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
 </head>
 
 <body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+      <a href="../dashboard/dashboard.html" class="active">首页</a>
+      <a href="../sphere_graph/sphere.html">贡献度3D可视化</a>
+      <a href="../salary/salary.html">球员薪资分析</a>
+      <a href="../salary/salary_ratio.html">性价比分析</a>
+  </nav>
   <div class="container-fluid px-4 py-3">
     <h1 class="text-center text-4xl font-bold mb-5">性价比散点图</h1>
 
@@ -66,13 +73,13 @@
     <div id="fixed-y-axis"></div>
   </div>
 
-  <script src="性价比散点图_js/d3.v7.min.js"></script>
-  <script src="性价比散点图_js/d3-tip.min.js"></script>
+  <script src="d3.v7.min.js"></script>
+  <script src="d3-tip.min.js"></script>
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
-  <script src="性价比散点图_js/scatterplot_data.js"></script>
-  <script src="性价比散点图_js/render_scatterplot.js"></script>
-  <script src="性价比散点图_js/scatterplot_main.js"></script>
+  <script src="scatterplot_data.js"></script>
+  <script src="render_scatterplot.js"></script>
+  <script src="scatterplot_main.js"></script>
 
 </body>
 

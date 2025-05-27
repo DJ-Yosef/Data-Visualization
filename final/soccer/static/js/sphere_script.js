@@ -1,4 +1,4 @@
-import { typeWriter} from './utils.js';
+import { typeWriter} from './sphere_utils.js';
 // 初始化场景、相机和渲染器
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -58,7 +58,7 @@ function updateContributionRank(players) {
 function updatePointFilter(position) {
     const pointFilter = document.getElementById('point-filter');
     pointFilter.innerHTML = '';
-    
+
     const options = pointFilters[position] || ['ALL'];
     options.forEach(option => {
         const optionElement = document.createElement('option');
@@ -75,7 +75,7 @@ function applyFilters() {
     if (currentTeam !== 'ALL') {
         filteredPlayers = allPlayers.filter(player => player.Squad === currentTeam);
     }
-    
+
     // 计算排名
     updateContributionRank(filteredPlayers);
 
@@ -85,25 +85,25 @@ function applyFilters() {
         if (currentFilters.position !== 'ALL' && player.Pos !== currentFilters.position) {
             return false;
         }
-        
+
         // 具体位置过滤
         if (currentFilters.point !== 'ALL' && player.DPos !== currentFilters.point) {
             return false;
         }
-        
+
         // 贡献度过滤
         const contribution = parseFloat(player.contribution);
         if (contribution < currentFilters.minContribution || contribution > currentFilters.maxContribution) {
             return false;
         }
-        
+
         // 贡献度排名过滤
         if (typeof player.rank === 'number') {
             if (player.rank < minRank || player.rank > maxRank) {
                 return false;
             }
         }
-        
+
         return true;
     });
     updatePlayerPositions(filteredPlayers);
@@ -162,21 +162,21 @@ if (minRankInput && maxRankInput) {
 }
 
 // 修改加载CSV数据后的处理
-d3.csv('con_merge_rank_s.csv').then(data => {
+d3.csv('../data/con_merge_rank_s.csv').then(data => {
     allPlayers = data;
-    
+
     // 获取所有球队
     const teams = [...new Set(data.map(d => d.Squad))];
-    
+
     // 填充球队选择下拉框
     const teamSelect = document.getElementById('team-select');
-    
+
     // 添加ALL选项
     const allOption = document.createElement('option');
     allOption.value = 'ALL';
     allOption.textContent = 'ALL Teams';
     teamSelect.appendChild(allOption);
-    
+
     teams.forEach(team => {
         const option = document.createElement('option');
         option.value = team;
@@ -237,31 +237,31 @@ function getGradientColor(pos, conColor, maxConColor) {
         }
         return colors[pos].base;
     }
-    
+
     const ratio = conColor / maxConColor;
-    
+
     // 如果是单个球队视图，使用更浅的渐变色
     if (currentTeam !== 'ALL') {
         const [startColor, endColor] = colors[pos].lightGradient;
         const startRGB = hexToRgb(startColor);
         const endRGB = hexToRgb(endColor);
-        
+
         const r = Math.round(startRGB.r + (endRGB.r - startRGB.r) * ratio);
         const g = Math.round(startRGB.g + (endRGB.g - startRGB.g) * ratio);
         const b = Math.round(startRGB.b + (endRGB.b - startRGB.b) * ratio);
-        
+
         return `rgb(${r}, ${g}, ${b})`;
     }
-    
+
     // ALL 视图使用原来的渐变色
     const [startColor, endColor] = colors[pos].gradient;
     const startRGB = hexToRgb(startColor);
     const endRGB = hexToRgb(endColor);
-    
+
     const r = Math.round(startRGB.r + (endRGB.r - startRGB.r) * ratio);
     const g = Math.round(startRGB.g + (endRGB.g - startRGB.g) * ratio);
     const b = Math.round(startRGB.b + (endRGB.b - startRGB.b) * ratio);
-    
+
     return `rgb(${r}, ${g}, ${b})`;
 }
 
@@ -278,24 +278,24 @@ function hexToRgb(hex) {
 // 解析纬度范围字符串
 function parseLatitudeRange(latRangeStr) {
     if (!latRangeStr) return null;
-    
+
     // 分割范围字符串
     const [startStr, endStr] = latRangeStr.split('-');
-    
+
     // 解析起始纬度
     const startMatch = startStr.match(/(\d+)°([NS])/);
     const endMatch = endStr.match(/(\d+)°([NS])/);
-    
+
     if (!startMatch || !endMatch) return null;
-    
+
     // 转换为数值
     let start = parseInt(startMatch[1]);
     let end = parseInt(endMatch[1]);
-    
+
     // 处理南纬（S）为负值
     if (startMatch[2] === 'N') start = -start;
     if (endMatch[2] === 'N') end = -end;
-    
+
     return { start, end };
 }
 
@@ -309,21 +309,21 @@ async function updatePlayerPositions(players) {
 
     // 创建球体几何体
     const sphereGeometry = new THREE.SphereGeometry(5, 64, 64);
-    
+
     // 创建纹理画布
     const textureCanvas = document.createElement('canvas');
     textureCanvas.width = 2048;
     textureCanvas.height = 1024;
     const ctx = textureCanvas.getContext('2d');
-    
+
     // 填充背景
     ctx.fillStyle = 'rgba(128, 128, 128, 0.3)';
     ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
-    
+
     // 绘制网格线
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.lineWidth = 1;
-    
+
     // 绘制经线
     for (let i = 0; i <= 360; i += 30) {
         const x = (i / 360) * textureCanvas.width;
@@ -332,7 +332,7 @@ async function updatePlayerPositions(players) {
         ctx.lineTo(x, textureCanvas.height);
         ctx.stroke();
     }
-    
+
     // 绘制纬线
     for (let i = -60; i <= 60; i += 10) {
         const y = ((90 - i) / 180) * textureCanvas.height;
@@ -349,14 +349,14 @@ async function updatePlayerPositions(players) {
         transparent: true,
         opacity: 0.9
     });
-    
+
     sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
     scene.add(sphere);
 
     if (currentTeam === 'ALL') {
         // 在ALL模式下，按纬度带分组
         const latitudeBands = new Map();
-        
+
         // 首先收集所有不同的纬度带
         players.forEach(player => {
             const latRange = parseLatitudeRange(player.all_latitude);
@@ -371,41 +371,41 @@ async function updatePlayerPositions(players) {
                 latitudeBands.get(bandKey).players.push(player);
             }
         });
-        
+
         // 对每个纬度带单独处理
         for (const [bandKey, bandData] of latitudeBands) {
             const { range, players } = bandData;
-            
+
             // 计算这个纬度带内球员的贡献度最大值
             const maxConColor = Math.max(...players.map(p => parseFloat(p.Con_color)));
-            
+
             // 从0度开始，依次分配经度范围
             let currentLongitude = 0;
             const totalLongitude = 360;
             const longitudePerPlayer = totalLongitude / players.length;
-            
+
             for (let i = 0; i < players.length; i++) {
                 const player = players[i];
                 const conColor = parseFloat(player.Con_color);
-                
+
                 // 计算球员的经度范围
                 const startLongitude = currentLongitude;
                 const endLongitude = startLongitude + longitudePerPlayer;
-                
+
                 // 计算中心经度
                 const centerLongitude = startLongitude + longitudePerPlayer/2;
-                
+
                 // 计算球员在球体上的位置
                 const longitudeRad = centerLongitude * (Math.PI / 180);
                 const latitude = ((range.start + range.end) / 2) * (Math.PI / 180);
-                
+
                 // 将球坐标转换为UV坐标
                 const u = (longitudeRad + Math.PI) / (2 * Math.PI);
                 const v = (latitude + Math.PI/2) / Math.PI;
-                
+
                 // 计算颜色
                 const color = getGradientColor(player.Pos, conColor, maxConColor);
-                
+
                 // 存储球员位置信息
                 playerPositions.set(player.Player, {
                     u, v,
@@ -419,7 +419,7 @@ async function updatePlayerPositions(players) {
                     },
                     latitudeRange: range
                 });
-                
+
                 // 更新下一个球员的起始经度
                 currentLongitude = endLongitude;
             }
@@ -452,34 +452,34 @@ async function updatePlayerPositions(players) {
         for (const pos of Object.keys(positions)) {
             const posPlayers = positions[pos];
             const range = latitudeRanges[pos];
-            
+
             // 从0度开始，依次分配经度范围
             let currentLongitude = 0;
             const totalLongitude = 360;
             const longitudePerPlayer = totalLongitude / posPlayers.length;
-            
+
             for (let i = 0; i < posPlayers.length; i++) {
                 const player = posPlayers[i];
                 const conColor = parseFloat(player.Con_color);
-                
+
                 // 计算球员的经度范围
                 const startLongitude = currentLongitude;
                 const endLongitude = startLongitude + longitudePerPlayer;
-                
+
                 // 计算中心经度
                 const centerLongitude = startLongitude + longitudePerPlayer/2;
-                
+
                 // 计算球员在球体上的位置
                 const longitudeRad = centerLongitude * (Math.PI / 180);
                 const latitude = ((range.start + range.end) / 2) * (Math.PI / 180);
-                
+
                 // 将球坐标转换为UV坐标
                 const u = (longitudeRad + Math.PI) / (2 * Math.PI);
                 const v = (latitude + Math.PI/2) / Math.PI;
-                
+
                 // 计算颜色
                 const color = getGradientColor(pos, conColor, maxConColors[pos]);
-                
+
                 // 存储球员位置信息
                 playerPositions.set(player.Player, {
                     u, v,
@@ -493,13 +493,13 @@ async function updatePlayerPositions(players) {
                     },
                     latitudeRange: range
                 });
-                
+
                 // 更新下一个球员的起始经度
                 currentLongitude = endLongitude;
             }
         }
     }
-    
+
     // 更新球体纹理
     updateSphereTexture();
 }
@@ -510,15 +510,15 @@ function updateSphereTexture() {
     canvas.width = 2048;
     canvas.height = 1024;
     const ctx = canvas.getContext('2d');
-    
+
     // 填充背景
     ctx.fillStyle = 'rgba(128, 128, 128, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
     // 绘制网格线
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     ctx.lineWidth = 1;
-    
+
     // 绘制经线
     for (let i = 0; i <= 360; i += 30) {
         const x = (i / 360) * canvas.width;
@@ -527,7 +527,7 @@ function updateSphereTexture() {
         ctx.lineTo(x, canvas.height);
         ctx.stroke();
     }
-    
+
     // 绘制纬线
     for (let i = -60; i <= 60; i += 10) {
         const y = ((90 - i) / 180) * canvas.height;
@@ -536,9 +536,9 @@ function updateSphereTexture() {
         ctx.lineTo(canvas.width, y);
         ctx.stroke();
     }
-    
+
     // 绘制球队logo在北极点
-    const squadPicture = currentTeam === 'ALL' 
+    const squadPicture = currentTeam === 'ALL'
         ? 'https://cdn.ssref.net/req/202505011/tlogo/fb/9.png'
         : allPlayers.find(p => p.Squad === currentTeam)?.Squad_picture;
 
@@ -558,64 +558,64 @@ function updateSphereTexture() {
         };
         img.src = squadPicture;
     }
-    
+
     // 绘制球员
     for (const [name, data] of playerPositions) {
         const player = data.player;
         const size = data.size * canvas.width;
-        
+
         // 计算位置和宽度
         let startX = data.longitudeRange.start * (canvas.width / 360);
         let endX = data.longitudeRange.end * (canvas.width / 360);
-        
+
         // 处理跨越0度经线的情况
         if (endX < startX) {
             endX += canvas.width;
         }
-        
+
         const width = endX - startX;
         const x = startX;
-        
+
         // 计算纬度范围对应的画布高度
         const range = data.latitudeRange; // 使用存储的纬度范围
         const startY = ((90 + range.start) / 180) * canvas.height;
         const endY = ((90 + range.end) / 180) * canvas.height;
         const height = endY - startY;
         const y = startY;
-        
+
         // 设置透明度
         ctx.globalAlpha = (selectedPlayerName === null || selectedPlayerName === name) ? 1 : 0.3;
-        
+
         // 绘制背景
         ctx.fillStyle = data.color;
         ctx.fillRect(x, y, width, height);
-        
+
         // 绘制边框
         ctx.strokeStyle = '#FFFFFF';
         ctx.lineWidth = 2;
         ctx.strokeRect(x, y, width, height);
-        
+
         // 绘制球员名字
         ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        
+
         // 计算合适的字体大小
         const maxWidth = width * 0.9; // 留出10%的边距
         const maxHeight = height * 0.8; // 留出20%的边距
         let fontSize = Math.min(size/10, height/5); // 减小初始字体大小
         ctx.font = `bold ${fontSize}px Arial`;
-        
+
         // 如果名字太长，尝试换行
         const words = player.Player.split(' ');
         if (words.length > 1) {
             // 计算每行最大字符数
             const maxCharsPerLine = Math.floor(maxWidth / (fontSize * 0.6)); // 0.6是字符宽度的估计值
-            
+
             // 将名字分成多行
             let lines = [];
             let currentLine = '';
-            
+
             for (const word of words) {
                 if ((currentLine + ' ' + word).length <= maxCharsPerLine) {
                     currentLine += (currentLine ? ' ' : '') + word;
@@ -625,18 +625,18 @@ function updateSphereTexture() {
                 }
             }
             if (currentLine) lines.push(currentLine);
-            
+
             // 如果行数太多，减小字体大小
             while (lines.length * fontSize > maxHeight && fontSize > 10) {
                 fontSize -= 2;
                 ctx.font = `bold ${fontSize}px Arial`;
             }
-            
+
             // 绘制多行文本
             const lineHeight = fontSize * 1.2;
             const totalHeight = lines.length * lineHeight;
             const startY = y + (height - totalHeight) / 2;
-            
+
             lines.forEach((line, index) => {
                 ctx.fillText(line, x + width/2, startY + index * lineHeight + fontSize/2);
             });
@@ -648,11 +648,11 @@ function updateSphereTexture() {
             }
             ctx.fillText(player.Player, x + width/2, y + height/2);
         }
-        
+
         // 重置透明度
         ctx.globalAlpha = 1;
     }
-    
+
     // 更新纹理
     sphere.material.map = new THREE.CanvasTexture(canvas);
     sphere.material.needsUpdate = true;
@@ -682,31 +682,31 @@ function onMouseClick(event) {
 
     // 3. 检查射线与球体的交点
     const intersects = raycaster.intersectObject(sphere);
-    
+
     if (intersects.length > 0) {
         const point = intersects[0].point;  // 得到三维空间中的点
-        
+
         // 4. 将三维点转换为球面坐标
         const radius = 5;
         const phi = Math.atan2(point.x, point.z);      // 经度角 [-π, π]
         const theta = Math.acos(point.y / radius);     // 纬度角 [0, π]
-        
+
         // 5. 将球面坐标转换为UV坐标
         const u = (phi + Math.PI*1/2) / (2 * Math.PI);     // 经度映射到 [0,1]
         const v = theta / Math.PI;                     // 纬度映射到 [0,1]
-        
+
         // 6. 将UV坐标转换为经纬度
         const longitude = u * 360;                     // 经度 [0, 360]
         const latitude = (v * 180) - 90;               // 纬度 [-90, 90]
-        
+
         // 查找点击的球员
         let clickedPlayer = null;
         let minDistance = Infinity;
-        
+
         for (const [name, data] of playerPositions) {
             // 计算点击位置到球员范围的距离
             let distance = 0;
-            
+
             // 检查经度是否在范围内
             if (data.longitudeRange.end < data.longitudeRange.start) {
                 // 处理跨越0度经线的情况
@@ -728,33 +728,33 @@ function onMouseClick(event) {
                     );
                 }
             }
-            
+
             // 检查纬度是否在范围内
             const latitudeRange = data.latitudeRange;
             if (latitude < latitudeRange.start || latitude > latitudeRange.end) {
                 distance = Infinity;
             }
-            
+
             // 计算点击位置到球员中心点的距离
             const centerLongitude = (data.longitudeRange.start + data.longitudeRange.end) / 2;
             const centerLatitude = (latitudeRange.start + latitudeRange.end) / 2;
-            
+
             const longitudeDistance = Math.min(
                 Math.abs(longitude - centerLongitude),
                 360 - Math.abs(longitude - centerLongitude)
             );
             const latitudeDistance = Math.abs(latitude - centerLatitude);
-            
+
             // 使用经纬度距离的加权和作为最终距离
             const totalDistance = Math.sqrt(longitudeDistance * longitudeDistance + latitudeDistance * latitudeDistance);
-            
+
             if (totalDistance < minDistance) {
                 minDistance = totalDistance;
                 clickedPlayer = data.player;
                 selectedPlayerName = name;
             }
         }
-        
+
         if (clickedPlayer && minDistance < 30) { // 设置一个合理的点击阈值
             showPlayerInfo(clickedPlayer);
             // 更新纹理以显示高亮效果
@@ -776,7 +776,7 @@ function onMouseClick(event) {
 // 显示球员信息
 function showPlayerInfo(player) {
     infoPanel.style.display = 'block';
-    
+
     // 创建信息HTML
     let infoHTML = `
         <div class="player-info">
@@ -876,4 +876,4 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-}); 
+});

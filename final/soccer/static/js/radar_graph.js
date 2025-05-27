@@ -118,24 +118,60 @@ const initialTransform = d3.zoomIdentity.translate(300, 300);
     });
   };
 
+  const parsePlayer = () => {
+    const params = new URLSearchParams(window.location.search);
+    const playerName = params.get('name');
+    if (!playerName) return;
+
+    const player = currentData.find(d => (d.player || d.Player) === playerName);
+    if (!player) return;
+
+    // 设置第一个筛选器的值
+    const team1Sel = d3.select('#team1');
+    const pos1Sel = d3.select('#pos1');
+    const player1Sel = d3.select('#player1');
+
+    // 设置队伍并触发change事件
+    team1Sel.property('value', player.squad || player.Team)
+      .dispatch('change')
+      .then(() => {
+        // 设置位置并触发change事件
+        pos1Sel.property('value', player.pos)
+          .dispatch('change')
+          .then(() => {
+            // 设置球员并触发change事件
+            player1Sel.property('value', playerName)
+              .dispatch('change');
+          });
+      });
+  };
+
   if (position === 'All') {
     Promise.all([
-      d3.json('final/soccer/static/data/players_data.json'),
-      d3.json('final/soccer/static/data/GK_Data.json')
+      d3.json('players_data.json'),
+      d3.json('GK_Data.json')
     ]).then(([fpData, gkData]) => {
       currentData = [...parseData(fpData), ...parseData(gkData)];
       initFilters(position);
+      parsePlayer
     });
   } else {
-    const file = position === 'GK' ? 'final/soccer/static/data/GK_Data.json' : 'final/soccer/static/data/players_data.json';
+    const file = position === 'GK' ? 'GK_Data.json' : 'players_data.json';
     d3.json(file).then(data => {
       currentData = parseData(data);
       initFilters(position);
+      parsePlayer();
     });
   }
 }
 
-
+// 在初始化select元素时添加Promise支持
+d3.selection.prototype.dispatch = function(typenames) {
+  return new Promise(resolve => {
+    this.node().dispatchEvent(new Event(typenames));
+    setTimeout(resolve, 100); // 确保异步更新完成
+  });
+};
 
     function initFilters(position) { // 初始化筛选器选项（队伍、位置、球员）
   const teams = Array.from(new Set(currentData.map(d => d.squad || d.Team))).sort();
@@ -150,6 +186,26 @@ const initialTransform = d3.zoomIdentity.translate(300, 300);
     teamSel.append('option').attr('value', '').text('Select Team');
     teams.forEach(t => teamSel.append('option').attr('value', t).text(t));
 
+    const queryStrings = window.location.search
+    const params = new URLSearchParams(queryStrings);
+    const player_name1 = params.get('name');
+    console.log('Player Name 1:', player_name1);
+    const player1 = currentData.find(d => (d.player || d.Player) === player_name1) || '#player1';
+    const team1 = player1?.squad || '#team1';
+    const pos1 = player1?.pos || '#pos1';
+
+    // if (teamSelId === '#team1' && team1 && teams.includes(team1)) {
+    //   teamSel.property('value', team1);
+    //   // teamSel.on('change')(); // 触发一次变更事件以加载位置和球员
+    //   const players = currentData.filter(d => (d.squad || d.Team) === team1);
+    //   const player = players.find(d => (d.player || d.Player) === player_name1) || players[0];
+    //   const pos = player.pos || player.Pos || 'All';
+    //   posSel.property('value', pos);
+    //   // posSel.on('change')(); // 触发一次变更事件以加载球员
+    //   playerSel.property('value', player.player || player.Player || '');
+    //   // playerSel.on('change')(); // 触发一次变更事件以绘制雷达图
+
+    // }
 
 
 teamSel.on('change', () => {

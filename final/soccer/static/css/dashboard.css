@@ -79,7 +79,6 @@ body {
     margin-bottom: 20px;
     border: 2px solid var(--primary-color);
     border-radius: 5px;
-    cursor: pointer;
 }
 
 .pitch-container {

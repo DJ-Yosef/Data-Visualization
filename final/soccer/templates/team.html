@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>球队详情</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        .team-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .team-header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+        .team-details {
+            margin-bottom: 20px;
+        }
+        .team-details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .team-details ul li {
+            margin: 5px 0;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="team-header">
+            <img id="team-logo" src="" alt="球队徽标">
+            <h1 id="team-name"></h1>
+        </div>
+        <div class="team-details">
+            <ul>
+                <li><strong>球员数量:</strong> <span id="num-players"></span></li>
+                <li><strong>周薪总额:</strong> <span id="weekly-wages"></span></li>
+                <li><strong>年薪总额:</strong> <span id="annual-wages"></span></li>
+                <li><strong>估计百分比:</strong> <span id="estimated-percentage"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 解析URL以获取队名
+        const urlParams = new URLSearchParams(window.location.search);
+        const teamNameFromUrl = urlParams.get('team');
+
+        if (!teamNameFromUrl) {
+            console.error('队名未在URL中提供');
+            return;
+        }
+
+        // 使用Fetch API获取Excel文件
+        fetch('Squad Wages.xlsx')
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                // 使用SheetJS读取Excel文件
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0]; // 假设数据在第一个工作表中
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                // 查找匹配的队名
+                let team = null;
+                for (let i = 1; i < json.length; i++) { // 假设第一行是表头
+                    if (json[i][1] === teamNameFromUrl) { // 假设第二列是队名
+                        team = {
+                            logo: json[i][0], // 球队徽标URL
+                            name: json[i][1], // 球队名称
+                            num_players: json[i][2], // 球员数量
+                            weekly_wages: json[i][3], // 周薪总额
+                            annual_wages: json[i][4], // 年薪总额
+                            estimated_percentage: json[i][5] // 估计百分比
+                        };
+                        break;
+                    }
+                }
+
+                if (!team) {
+                    console.error('未找到指定的球队');
+                    return;
+                }
+
+                // 更新HTML元素的内容
+                document.getElementById('team-logo').src = team.logo;
+                document.getElementById('team-name').innerText = team.name;
+                document.getElementById('num-players').innerText = team.num_players;
+                document.getElementById('weekly-wages').innerText = team.weekly_wages;
+                document.getElementById('annual-wages').innerText = team.annual_wages;
+                document.getElementById('estimated-percentage').innerText = team.estimated_percentage;
+            })
+            .catch(error => console.error('Error loading team data:', error));
+    </script>
+</body>
+</html>
