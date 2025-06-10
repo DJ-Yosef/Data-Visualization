@@ -153,7 +153,8 @@ const initialTransform = d3.zoomIdentity.translate(300, 300);
     ]).then(([fpData, gkData]) => {
       currentData = [...parseData(fpData), ...parseData(gkData)];
       initFilters(position);
-      parsePlayer
+      parsePlayer();
+      drawChart();
     });
   } else {
     const file = position === 'GK' ? 'GK_Data.json' : 'players_data.json';
@@ -161,6 +162,7 @@ const initialTransform = d3.zoomIdentity.translate(300, 300);
       currentData = parseData(data);
       initFilters(position);
       parsePlayer();
+      drawChart();
     });
   }
 }
