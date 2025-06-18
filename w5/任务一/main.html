@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界最高建筑可视化</title>
+    <script src="d3.v7.min.js"></script>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>世界最高建筑可视化</h1>
+        </header>
+
+        <div class="content">
+            <div class="chart-container">
+                <div id="chart"></div>
+            </div>
+
+            <div class="detail-container">
+                <div class="detail-header">
+                    <h2 id="building-name">请选择一栋建筑</h2>
+                    <p id="building-location">点击左侧柱状图查看详细信息</p>
+                </div>
+
+                <img id="building-image" class="building-image" src="" alt="建筑图片">
+
+                <div class="building-info">
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">高度</td>
+                            <td id="height-value" class="info-value">-</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">城市</td>
+                            <td id="city-value" class="info-value">-</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">国家</td>
+                            <td id="country-value" class="info-value">-</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">楼层数</td>
+                            <td id="floors-value" class="info-value">-</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">竣工年份</td>
+                            <td id="year-value" class="info-value">-</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
