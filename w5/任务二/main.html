@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Za'atari Refugee Camp Visualization</title>
+    <script src="/d3.v7.min.js"></script>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+        }
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .chart {
+            width: 48%;
+            min-width: 300px;
+        }
+        .tooltip {
+            position: absolute;
+            background: var(--tooltip-background);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tooltip.visible {
+            opacity: 1;
+        }
+        .area {
+            fill: var(--primary-color);
+            opacity: 0.7;
+        }
+        .bar {
+            fill: var(--primary-color);
+        }
+        .axis path, .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        .axis text {
+            font-size: 12px;
+        }
+        .bar text {
+            fill: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: var(--text-color);">Za'atari Refugee Camp</h1>
+    <div class="chart-container">
+        <div class="chart" id="population-chart"></div>
+        <div class="chart" id="shelter-chart"></div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
